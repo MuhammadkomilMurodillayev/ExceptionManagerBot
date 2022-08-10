@@ -1,0 +1,74 @@
+package com.example.errormanager.api.service;
+
+import com.example.errormanager.api.criteria.DeveloperCriteria;
+import com.example.errormanager.api.domain.Developer;
+import com.example.errormanager.api.dto.developer.DeveloperCreateDTO;
+import com.example.errormanager.api.dto.developer.DeveloperDTO;
+import com.example.errormanager.api.dto.developer.DeveloperUpdateDTO;
+import com.example.errormanager.api.exception.BasicCredentials;
+import com.example.errormanager.api.mapper.DeveloperMapper;
+import com.example.errormanager.api.repository.DeveloperRepository;
+import com.example.errormanager.api.validation.DeveloperValidation;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * @author Muhammadkomil Murodillayev, ср 10:25. 8/10/22
+ */
+
+@Service
+public class DeveloperService extends AbstractService<
+        DeveloperRepository,
+        DeveloperMapper,
+        DeveloperValidation> implements BaseCrudService<
+        Developer,
+        DeveloperDTO,
+        DeveloperCreateDTO,
+        DeveloperUpdateDTO,
+        Long,
+        DeveloperCriteria> {
+
+
+    public DeveloperService(DeveloperRepository repository, DeveloperMapper mapper, DeveloperRepository validation) {
+        super(repository, mapper, validation);
+    }
+
+    public DeveloperDTO getByUsername(String username) {
+
+        Optional<Developer> developerOptional = repository.findByUsernameAndDeletedFalse(username);
+        if (developerOptional.isPresent()) {
+            return mapper.toDTO(developerOptional.get());
+        }
+
+        throw new BasicCredentials();
+    }
+
+    @Override
+    public Developer create(DeveloperCreateDTO dto) {
+        Developer developer = mapper.fromCreateDTO(dto);
+        repository.save(developer);
+        return developer;
+    }
+
+    @Override
+    public Boolean delete(Long id) {
+        return null;
+    }
+
+    @Override
+    public Boolean update(DeveloperUpdateDTO dto) {
+        return true;
+    }
+
+    @Override
+    public DeveloperDTO get(Long id) {
+        return null;
+    }
+
+    @Override
+    public List<DeveloperDTO> getAll(DeveloperCriteria criteria) {
+        return null;
+    }
+}

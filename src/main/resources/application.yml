@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/exception_management?current_schema=main
+    username: postgres
+    password: 19801980
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+bot:
+  username: Exception_managerbot
+  token: 5415772343:AAGHJ5U59TrijJBVjhez3Nb6RQUeYUeTmC8
+server:
+  port: 6060
+
