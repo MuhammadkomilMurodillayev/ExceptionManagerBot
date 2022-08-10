@@ -1,6 +1,7 @@
 package com.example.errormanager.bot.handler;
 
 import com.example.errormanager.api.dto.developer.DeveloperDTO;
+import com.example.errormanager.api.dto.developer.DeveloperUpdateDTO;
 import com.example.errormanager.api.service.DeveloperService;
 import com.example.errormanager.bot.ErrorManagerBot;
 import com.example.errormanager.bot.button.MarkupBoard;
@@ -13,6 +14,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import static com.example.errormanager.bot.button.MarkupBoard.programmerMenu;
+import static com.example.errormanager.bot.button.MarkupBoard.teamLeadMenu;
 import static com.example.errormanager.bot.states.State.getDeveloperState;
 import static com.example.errormanager.bot.states.State.setDeveloperState;
 
@@ -45,25 +48,34 @@ public class MessageHandler implements BaseHandler {
 
         if (message.getText().equals("/start") && getDeveloperState(chatId).equals(DeveloperState.UNAUTHENTICATED)) {
             sendMessage.setText("input username and password.\nexp: ☝️<i>username/password</i>");
-            try {
-                bot.execute(sendMessage);
-            } catch (TelegramApiException e) {
-                throw new RuntimeException(e);
-            }
-        } else if (getDeveloperState(chatId).equals(DeveloperState.UNAUTHENTICATED)) {
-            String[] usernameAndPassword = message.getText().split("/");
+            bot.sendMessage(sendMessage);
 
-            DeveloperDTO developer = developerService.getByUsername(usernameAndPassword[0]);
+        } else if (getDeveloperState(chatId).equals(DeveloperState.UNAUTHENTICATED)) {
+
+            String[] usernameAndPassword = message.getText().split("/");
+            String username = usernameAndPassword[0];
+            String password = usernameAndPassword[1];
+
+            DeveloperDTO developer = developerService.getByUsername(username);
             PasswordEncoder encoder = new BCryptPasswordEncoder(8);
 
-            if (encoder.matches(usernameAndPassword[1], developer.getPassword())) {
+            if (encoder.matches(password, developer.getPassword())) {
+
                 setDeveloperState(chatId, DeveloperState.AUTHENTICATED);
-                sendMessage.setText("successfully authenticated");
-                try {
-                    bot.execute(sendMessage);
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
+                DeveloperUpdateDTO updateDTO = new DeveloperUpdateDTO();
+                updateDTO.setChatId(chatId);
+                developerService.update(updateDTO);
+
+                switch (developer.getRole().toString()) {
+
+                    case "PROGRAMMER" -> sendMessage.setReplyMarkup(teamLeadMenu(chatId));
+
+                    case "TEAM_LEAD" -> sendMessage.setReplyMarkup(programmerMenu(chatId));
+
                 }
+                sendMessage.setText("successfully authenticated");
+                bot.sendMessage(sendMessage);
+
             }
         }
     }

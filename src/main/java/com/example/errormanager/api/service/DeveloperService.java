@@ -71,4 +71,9 @@ public class DeveloperService extends AbstractService<
     public List<DeveloperDTO> getAll(DeveloperCriteria criteria) {
         return null;
     }
+
+    public int getDeveloperRole(String chatId) {
+
+        return 0;
+    }
 }

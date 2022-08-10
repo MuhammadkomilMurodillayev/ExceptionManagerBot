@@ -26,4 +26,6 @@ public class DeveloperUpdateDTO extends BaseGenericDTO {
     private DeveloperRole role;
 
     private Set<Project> projects;
+
+    private String chatId;
 }

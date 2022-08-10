@@ -29,6 +29,9 @@ public class Developer extends Auditable {
     @Enumerated(value = EnumType.STRING)
     private DeveloperRole role;
 
+    @Column(name = "chat_id")
+    private String chatId;
+
     @ManyToMany
     @JoinTable(
             name = "developer_project",

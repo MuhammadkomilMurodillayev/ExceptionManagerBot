@@ -39,4 +39,12 @@ public class ErrorManagerBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         updateHandler.handle(update);
     }
+
+    public void sendMessage(SendMessage sendMessage){
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
