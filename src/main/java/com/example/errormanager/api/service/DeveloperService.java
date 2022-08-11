@@ -6,6 +6,7 @@ import com.example.errormanager.api.dto.developer.DeveloperCreateDTO;
 import com.example.errormanager.api.dto.developer.DeveloperDTO;
 import com.example.errormanager.api.dto.developer.DeveloperUpdateDTO;
 import com.example.errormanager.api.exception.BasicCredentials;
+import com.example.errormanager.api.exception.DeveloperNotFoundException;
 import com.example.errormanager.api.mapper.DeveloperMapper;
 import com.example.errormanager.api.repository.DeveloperRepository;
 import com.example.errormanager.api.validation.DeveloperValidation;
@@ -59,7 +60,12 @@ public class DeveloperService extends AbstractService<
 
     @Override
     public Boolean update(DeveloperUpdateDTO dto) {
-        return true;
+        Optional<Developer> developerOptional = repository.findByIdAndDeletedFalse(dto.getId());
+        if (developerOptional.isPresent()) {
+            repository.save(mapper.fromUpdateDTO(developerOptional.get(), dto));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -75,5 +81,13 @@ public class DeveloperService extends AbstractService<
     public int getDeveloperRole(String chatId) {
 
         return 0;
+    }
+
+    public DeveloperDTO getByChatId(String chatId) {
+        Optional<Developer> developerOptional = repository.findByChatIdAndDeletedFalse(chatId);
+        if (developerOptional.isPresent())
+            return mapper.toDTO(developerOptional.get());
+        throw new DeveloperNotFoundException();
+
     }
 }

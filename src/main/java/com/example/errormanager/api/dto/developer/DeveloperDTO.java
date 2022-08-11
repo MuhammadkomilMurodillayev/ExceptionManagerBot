@@ -26,4 +26,6 @@ public class DeveloperDTO extends BaseGenericDTO {
 
     private Set<Project> projects;
 
+    private String chatId;
+
 }

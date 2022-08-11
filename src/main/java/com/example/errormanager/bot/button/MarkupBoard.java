@@ -1,8 +1,12 @@
 package com.example.errormanager.bot.button;
 
+import com.example.errormanager.api.domain.Developer;
+import com.example.errormanager.api.enums.DeveloperRole;
 import com.example.errormanager.bot.enums.HomeMenuState;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -17,9 +21,22 @@ import static com.example.errormanager.bot.states.State.getHomeMenuState;
 public class MarkupBoard {
     private static final ReplyKeyboardMarkup board = new ReplyKeyboardMarkup();
 
-    public static ReplyKeyboardMarkup teamLeadMenu(String chatId) {
+    public void menu(SendMessage sendMessage, DeveloperRole role){
+
+        switch (role.toString()) {
+
+            case "PROGRAMMER" -> sendMessage.setReplyMarkup(programmerMenu(sendMessage.getChatId()));
+
+            case "TEAM_LEAD" -> sendMessage.setReplyMarkup(teamLeadMenu(sendMessage.getChatId()));
+
+        }
+    }
+
+    public  ReplyKeyboardMarkup teamLeadMenu(String chatId) {
         switch (getHomeMenuState(chatId).toString()) {
-            case "HOME_MENU" -> {
+            case "MAIN_MENU" -> {
+                InlineKeyboardButton button = new InlineKeyboardButton();
+
                 KeyboardRow row = new KeyboardRow();
                 row.add(new KeyboardButton("project service"));
                 row.add(new KeyboardButton("user service"));
@@ -67,10 +84,10 @@ public class MarkupBoard {
         return null;
     }
 
-    public static ReplyKeyboardMarkup programmerMenu(String chatId) {
+    public ReplyKeyboardMarkup programmerMenu(String chatId) {
 
         switch (getHomeMenuState(chatId).toString()) {
-            case "HOME_MENU" -> {
+            case "MAIN_MENU" -> {
                 KeyboardRow row = new KeyboardRow();
                 row.add(new KeyboardButton("project service"));
                 row.add(new KeyboardButton("settings"));

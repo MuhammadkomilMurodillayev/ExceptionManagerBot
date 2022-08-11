@@ -34,6 +34,7 @@ public class DeveloperMapper implements BaseMapper<DeveloperDTO, Developer, Deve
         List<Project> projectList = projectRepository.findAllByDeleted(false);
         Set<Project> projects = new HashSet<>(projectList);
 
+        developer.setChatId(domain.getChatId());
         developer.setRole(domain.getRole());
         developer.setFullName(domain.getFullName());
         developer.setId(domain.getId());
@@ -79,6 +80,7 @@ public class DeveloperMapper implements BaseMapper<DeveloperDTO, Developer, Deve
         if (dto.getPassword() != null) developer.setPassword(ENCODER.encode(dto.getPassword()));
         if (dto.getPassword() != null) developer.setRole(dto.getRole());
         if (dto.getProjects() != null) developer.setProjects(dto.getProjects());
+        if (dto.getChatId() != null) developer.setChatId(dto.getChatId());
 
         return developer;
 

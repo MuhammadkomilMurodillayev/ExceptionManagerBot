@@ -12,5 +12,9 @@ import java.util.Optional;
 @Repository
 public interface DeveloperRepository extends JpaRepository<Developer, Long> , BaseRepository{
 
+    Optional<Developer> findByIdAndDeletedFalse(Long id);
+
     Optional<Developer> findByUsernameAndDeletedFalse(String username);
+
+    Optional<Developer> findByChatIdAndDeletedFalse(String chatId);
 }

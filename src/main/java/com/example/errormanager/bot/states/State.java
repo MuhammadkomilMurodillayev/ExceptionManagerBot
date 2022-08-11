@@ -35,6 +35,7 @@ public class State {
         if (Objects.isNull(homeMenuStateMap.get(chatId))) {
             State.setHomeMenuState(chatId, HomeMenuState.MAIN_MENU);
         }
+        System.out.println(homeMenuStateMap.get(chatId));
         return homeMenuStateMap.get(chatId);
     }
 
