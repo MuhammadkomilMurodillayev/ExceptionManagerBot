@@ -6,9 +6,7 @@ package com.example.errormanager.bot.enums;
 public enum HomeMenuState {
 
     USER_SERVICE,
-
     PROJECT_SERVICE,
-
     SETTINGS,
     MAIN_MENU
 }

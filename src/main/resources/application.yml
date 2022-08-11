@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:54321/exception_management?current_schema=main
+    url: jdbc:postgresql://localhost:5432/exception_management?current_schema=main
     username: postgres
     password: 19801980
   jpa:

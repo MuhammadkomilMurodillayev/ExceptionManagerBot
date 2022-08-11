@@ -1,15 +1,16 @@
 package com.example.errormanager.bot.button;
 
-import com.example.errormanager.api.domain.Developer;
 import com.example.errormanager.api.enums.DeveloperRole;
 import com.example.errormanager.bot.enums.HomeMenuState;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.errormanager.bot.states.State.getHomeMenuState;
@@ -20,102 +21,66 @@ import static com.example.errormanager.bot.states.State.getHomeMenuState;
 @Component
 public class MarkupBoard {
     private static final ReplyKeyboardMarkup board = new ReplyKeyboardMarkup();
+    private static final InlineKeyboardMarkup keyBoard = new InlineKeyboardMarkup();
+    public void menu(SendMessage sendMessage, DeveloperRole role) {
 
-    public void menu(SendMessage sendMessage, DeveloperRole role){
+        String chatId = sendMessage.getChatId();
+        if (getHomeMenuState(chatId).equals(HomeMenuState.MAIN_MENU)) {
 
-        switch (role.toString()) {
-
-            case "PROGRAMMER" -> sendMessage.setReplyMarkup(programmerMenu(sendMessage.getChatId()));
-
-            case "TEAM_LEAD" -> sendMessage.setReplyMarkup(teamLeadMenu(sendMessage.getChatId()));
-
-        }
-    }
-
-    public  ReplyKeyboardMarkup teamLeadMenu(String chatId) {
-        switch (getHomeMenuState(chatId).toString()) {
-            case "MAIN_MENU" -> {
-                InlineKeyboardButton button = new InlineKeyboardButton();
-
-                KeyboardRow row = new KeyboardRow();
-                row.add(new KeyboardButton("project service"));
+            KeyboardRow row = new KeyboardRow();
+            row.add(new KeyboardButton("project service"));
+            if (role.equals(DeveloperRole.TEAM_LEAD))
                 row.add(new KeyboardButton("user service"));
-                row.add(new KeyboardButton("settings"));
-                board.setKeyboard(List.of(row));
-                board.setResizeKeyboard(true);
-                board.setSelective(true);
-                return board;
-            }
-            case "PROJECT_SERVICE" -> {
-                KeyboardRow row = new KeyboardRow();
-                row.add(new KeyboardButton("add project"));
-                row.add(new KeyboardButton("all projects"));
-                row.add(new KeyboardButton("set projects"));
-                row.add(new KeyboardButton("my projects"));
+            row.add(new KeyboardButton("settings"));
+            board.setKeyboard(List.of(row));
+            board.setResizeKeyboard(true);
+            board.setSelective(true);
+            sendMessage.setText("Tanlang");
+            sendMessage.setReplyMarkup(board);
+        } else if (getHomeMenuState(chatId).equals(HomeMenuState.PROJECT_SERVICE) && role.equals(DeveloperRole.PROGRAMMER)) {
 
-                KeyboardRow row1 = new KeyboardRow();
-                row1.add(new KeyboardButton("delete project"));
-                row1.add(new KeyboardButton("project details"));
-                row1.add(new KeyboardButton("back"));
-                board.setKeyboard(List.of(row, row1));
-                board.setResizeKeyboard(true);
-                board.setSelective(true);
-                return board;
-            }
-            case "USER_SERVICE" -> {
-                KeyboardRow row = new KeyboardRow();
-                row.add(new KeyboardButton("add user"));
-                row.add(new KeyboardButton("all user"));
+            List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+            buttons.add(List.of(new InlineKeyboardButton("set Project")));
+            buttons.add(List.of(
+                    new InlineKeyboardButton("my project")
+            ));
+            keyBoard.setKeyboard(buttons);
+            sendMessage.setText("Tanlang");
+            sendMessage.setReplyMarkup(keyBoard);
 
-                KeyboardRow row1 = new KeyboardRow();
-                row1.add(new KeyboardButton("delete user"));
-                row1.add(new KeyboardButton("user details"));
-                row1.add(new KeyboardButton("back"));
-                board.setKeyboard(List.of(row, row1));
-                board.setResizeKeyboard(true);
-                board.setSelective(true);
-                return board;
-            }
-            case "SETTINGS" -> {
-                //TODO version 2
-            }
+        } else if (getHomeMenuState(chatId).equals(HomeMenuState.PROJECT_SERVICE) && role.equals(DeveloperRole.TEAM_LEAD)) {
 
-        }
-        return null;
-    }
+            List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+            buttons.add(List.of(new InlineKeyboardButton("set Project")));
+            buttons.add(List.of(
+                    new InlineKeyboardButton("add project"),
+                    new InlineKeyboardButton("my project"),
+                    new InlineKeyboardButton("all project"),
+                    new InlineKeyboardButton("project details")
+            ));
+            keyBoard.setKeyboard(buttons);
+            sendMessage.setText("Tanlang");
+            sendMessage.setReplyMarkup(keyBoard);
 
-    public ReplyKeyboardMarkup programmerMenu(String chatId) {
+        } else if (getHomeMenuState(chatId).equals(HomeMenuState.USER_SERVICE) && role.equals(DeveloperRole.TEAM_LEAD)) {
 
-        switch (getHomeMenuState(chatId).toString()) {
-            case "MAIN_MENU" -> {
-                KeyboardRow row = new KeyboardRow();
-                row.add(new KeyboardButton("project service"));
-                row.add(new KeyboardButton("settings"));
-                board.setKeyboard(List.of(row));
-                board.setResizeKeyboard(true);
-                board.setSelective(true);
-                return board;
-            }
-            case "PROJECT_SERVICE" -> {
-                KeyboardRow row = new KeyboardRow();
-                row.add(new KeyboardButton("set project"));
-                row.add(new KeyboardButton("my project"));
+            List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+            buttons.add(List.of(new InlineKeyboardButton("add user")));
+            buttons.add(List.of(
+                    new InlineKeyboardButton("delete user"),
+                    new InlineKeyboardButton("all user"),
+                    new InlineKeyboardButton("user details")
+            ));
+            keyBoard.setKeyboard(buttons);
+            sendMessage.setText("Tanlang");
+            sendMessage.setReplyMarkup(keyBoard);
 
-                KeyboardRow row1 = new KeyboardRow();
+        } else if (getHomeMenuState(chatId).equals(HomeMenuState.SETTINGS)) {
 
-                row1.add(new KeyboardButton("back"));
-
-                board.setKeyboard(List.of(row, row1));
-                board.setResizeKeyboard(true);
-                board.setSelective(true);
-                return board;
-            }
-            case "SETTINGS" -> {
-                //TODO version 2
-            }
+            //TODO version 2
 
         }
-        return null;
+
     }
 
 }

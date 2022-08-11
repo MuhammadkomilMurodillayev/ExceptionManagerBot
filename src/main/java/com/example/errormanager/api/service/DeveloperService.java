@@ -5,6 +5,7 @@ import com.example.errormanager.api.domain.Developer;
 import com.example.errormanager.api.dto.developer.DeveloperCreateDTO;
 import com.example.errormanager.api.dto.developer.DeveloperDTO;
 import com.example.errormanager.api.dto.developer.DeveloperUpdateDTO;
+import com.example.errormanager.api.dto.project.SendErrorDTO;
 import com.example.errormanager.api.exception.BasicCredentials;
 import com.example.errormanager.api.exception.DeveloperNotFoundException;
 import com.example.errormanager.api.mapper.DeveloperMapper;
@@ -88,6 +89,13 @@ public class DeveloperService extends AbstractService<
         if (developerOptional.isPresent())
             return mapper.toDTO(developerOptional.get());
         throw new DeveloperNotFoundException();
+
+    }
+
+    public List<SendErrorDTO> getDeveloperChatId(Long projectId) {
+
+//        return repository.findAllChatId(projectId);
+        return null;
 
     }
 }

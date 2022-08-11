@@ -36,8 +36,7 @@ public class Developer extends Auditable {
     @JoinTable(
             name = "developer_project",
             joinColumns = @JoinColumn(name = "developer_id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id",
-                    unique = true)
+            inverseJoinColumns = @JoinColumn(name = "project_id")
     )
     private Set<Project> projects;
 

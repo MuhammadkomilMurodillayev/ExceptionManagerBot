@@ -20,6 +20,8 @@ public class ErrorMessage implements BaseDomain{
 
     private InputStream stream;
 
+    private String errorText;
+
     private Long projectId;
 
     private LocalDateTime happenTime;
