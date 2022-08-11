@@ -22,6 +22,7 @@ import static com.example.errormanager.bot.states.State.getHomeMenuState;
 public class MarkupBoard {
     private static final ReplyKeyboardMarkup board = new ReplyKeyboardMarkup();
     private static final InlineKeyboardMarkup keyBoard = new InlineKeyboardMarkup();
+
     public void menu(SendMessage sendMessage, DeveloperRole role) {
 
         String chatId = sendMessage.getChatId();
@@ -35,50 +36,49 @@ public class MarkupBoard {
             board.setKeyboard(List.of(row));
             board.setResizeKeyboard(true);
             board.setSelective(true);
-            sendMessage.setText("Tanlang");
             sendMessage.setReplyMarkup(board);
         } else if (getHomeMenuState(chatId).equals(HomeMenuState.PROJECT_SERVICE) && role.equals(DeveloperRole.PROGRAMMER)) {
 
             List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-            buttons.add(List.of(new InlineKeyboardButton("set Project")));
-            buttons.add(List.of(
-                    new InlineKeyboardButton("my project")
-            ));
+            buttons.add(List.of(InlineKeyboardButton.builder().text("set project").callbackData("set_project").build()));
+            buttons.add(List.of(InlineKeyboardButton.builder().text("my project").callbackData("my_project").build()));
+
             keyBoard.setKeyboard(buttons);
-            sendMessage.setText("Tanlang");
+            sendMessage.setText("=== Project sevice ===");
             sendMessage.setReplyMarkup(keyBoard);
 
         } else if (getHomeMenuState(chatId).equals(HomeMenuState.PROJECT_SERVICE) && role.equals(DeveloperRole.TEAM_LEAD)) {
 
             List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-            buttons.add(List.of(new InlineKeyboardButton("set Project")));
+            buttons.add(List.of(InlineKeyboardButton.builder().text("set project").callbackData("set_project").build()));
             buttons.add(List.of(
-                    new InlineKeyboardButton("add project"),
-                    new InlineKeyboardButton("my project"),
-                    new InlineKeyboardButton("all project"),
-                    new InlineKeyboardButton("project details")
+                    InlineKeyboardButton.builder().text("add project").callbackData("add_project").build(),
+                    InlineKeyboardButton.builder().text("my project").callbackData("my_project").build(),
+                    InlineKeyboardButton.builder().text("all project").callbackData("all_project").build(),
+                    InlineKeyboardButton.builder().text("project details").callbackData("project_details").build()
             ));
+
             keyBoard.setKeyboard(buttons);
-            sendMessage.setText("Tanlang");
+            sendMessage.setText("=== Project sevice ===");
             sendMessage.setReplyMarkup(keyBoard);
 
         } else if (getHomeMenuState(chatId).equals(HomeMenuState.USER_SERVICE) && role.equals(DeveloperRole.TEAM_LEAD)) {
 
             List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-            buttons.add(List.of(new InlineKeyboardButton("add user")));
+            buttons.add(List.of(InlineKeyboardButton.builder().text("add user").callbackData("add_user").build()));
             buttons.add(List.of(
-                    new InlineKeyboardButton("delete user"),
-                    new InlineKeyboardButton("all user"),
-                    new InlineKeyboardButton("user details")
+                    InlineKeyboardButton.builder().text("delete user").callbackData("delete_user").build(),
+                    InlineKeyboardButton.builder().text("all user").callbackData("all_user").build(),
+                    InlineKeyboardButton.builder().text("user details").callbackData("user_details").build()
             ));
+
             keyBoard.setKeyboard(buttons);
-            sendMessage.setText("Tanlang");
+            sendMessage.setText("=== User sevice ===");
             sendMessage.setReplyMarkup(keyBoard);
 
         } else if (getHomeMenuState(chatId).equals(HomeMenuState.SETTINGS)) {
-
+            sendMessage.setText("Tayyor emas");
             //TODO version 2
-
         }
 
     }

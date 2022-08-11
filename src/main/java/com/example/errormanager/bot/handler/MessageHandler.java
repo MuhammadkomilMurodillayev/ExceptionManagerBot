@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import static com.example.errormanager.bot.states.State.*;
@@ -45,7 +46,7 @@ public class MessageHandler implements BaseHandler {
         sendMessage.setChatId(chatId);
 
         if (message.getText().equals("/start") && getDeveloperState(chatId).equals(DeveloperState.UNAUTHENTICATED)) {
-            sendMessage.setText("input username and password.\nexp: ☝️<i>username/password</i>");
+            sendMessage.setText("<b>input username and password.\n\nexp:</b> <i>username/password</i>");
             bot.sendMessage(sendMessage);
 
         } else if (getDeveloperState(chatId).equals(DeveloperState.UNAUTHENTICATED) && message.getText().contains("/")) {
@@ -60,12 +61,11 @@ public class MessageHandler implements BaseHandler {
             if (encoder.matches(password, developer.getPassword())) {
 
                 setDeveloperState(chatId, DeveloperState.AUTHENTICATED);
-                sendMessage.setText("successfully authenticated");
+                sendMessage.setText("Successfully authenticated");
                 DeveloperUpdateDTO developerUpdateDTO = new DeveloperUpdateDTO();
                 developerUpdateDTO.setChatId(chatId);
                 developerUpdateDTO.setId(developer.getId());
                 developerService.update(developerUpdateDTO);
-
                 markupBoard.menu(sendMessage, developer.getRole());
                 bot.sendMessage(sendMessage);
             }
