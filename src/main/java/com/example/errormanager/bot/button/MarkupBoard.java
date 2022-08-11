@@ -33,7 +33,9 @@ public class MarkupBoard {
             if (role.equals(DeveloperRole.TEAM_LEAD))
                 row.add(new KeyboardButton("user service"));
             row.add(new KeyboardButton("settings"));
-            board.setKeyboard(List.of(row));
+            KeyboardRow row1 = new KeyboardRow();
+            row1.add(new KeyboardButton("logout"));
+            board.setKeyboard(List.of(row, row1));
             board.setResizeKeyboard(true);
             board.setSelective(true);
             sendMessage.setReplyMarkup(board);
@@ -44,7 +46,7 @@ public class MarkupBoard {
             buttons.add(List.of(InlineKeyboardButton.builder().text("my project").callbackData("my_project").build()));
 
             keyBoard.setKeyboard(buttons);
-            sendMessage.setText("=== Project sevice ===");
+            sendMessage.setText("=== Project service ===");
             sendMessage.setReplyMarkup(keyBoard);
 
         } else if (getHomeMenuState(chatId).equals(HomeMenuState.PROJECT_SERVICE) && role.equals(DeveloperRole.TEAM_LEAD)) {

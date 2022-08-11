@@ -28,7 +28,7 @@ public class ProjectService extends AbstractService<
         Long,
         ProjectCriteria> {
 
-    public ProjectService(ProjectRepository repository, ProjectMapper mapper, ProjectRepository validation) {
+    public ProjectService(ProjectRepository repository, ProjectMapper mapper, ProjectValidation validation) {
         super(repository, mapper, validation);
     }
 

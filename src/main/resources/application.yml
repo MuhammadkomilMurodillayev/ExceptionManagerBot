@@ -7,10 +7,15 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
 bot:
   username: Exception_managerbot
-  token: 5415772343:AAGHJ5U59TrijJBVjhez3Nb6RQUeYUeTmC8
+  token: 5415772343:AAEI8404yPyfP1z-fCh1iazh10SY0lngdgo
 server:
   port: 6060
+springdoc:
+  swagger-ui:
+    path: /sw
+  api-docs:
+    path: /api-docs
 

@@ -14,16 +14,14 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 @Component
 public class BotInitializer {
-
     final ErrorManagerBot bot;
-
     public BotInitializer(ErrorManagerBot bot) {
         this.bot = bot;
     }
 
     @EventListener({ContextRefreshedEvent.class})
     public void init() throws TelegramApiException {
-        TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
+        final TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         telegramBotsApi.registerBot(bot);
     }
 }

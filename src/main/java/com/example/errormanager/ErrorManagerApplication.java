@@ -6,6 +6,7 @@ import com.example.errormanager.api.dto.project.ProjectCreateDTO;
 import com.example.errormanager.api.enums.DeveloperRole;
 import com.example.errormanager.api.service.DeveloperService;
 import com.example.errormanager.api.service.ProjectService;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.HashSet;
 import java.util.Set;
 
+@OpenAPIDefinition
 @SpringBootApplication
 public class ErrorManagerApplication /*implements CommandLineRunner*/ {
 

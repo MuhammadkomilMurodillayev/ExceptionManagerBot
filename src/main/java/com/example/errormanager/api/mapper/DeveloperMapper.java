@@ -17,7 +17,12 @@ import java.util.*;
  * @author Muhammadkomil Murodillayev, ср 11:40. 8/10/22
  */
 @Component
-public class DeveloperMapper implements BaseMapper<DeveloperDTO, Developer, DeveloperCreateDTO, DeveloperUpdateDTO> {
+public class DeveloperMapper
+        implements BaseGenericMapper<
+                DeveloperDTO,
+                Developer,
+                DeveloperCreateDTO,
+                DeveloperUpdateDTO> {
 
     private final ProjectRepository projectRepository;
 

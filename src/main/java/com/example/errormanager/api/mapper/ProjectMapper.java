@@ -13,11 +13,11 @@ import java.util.List;
  */
 
 @Component
-public class ProjectMapper implements BaseMapper<
+public class ProjectMapper implements BaseGenericMapper<
         ProjectDTO,
         Project,
         ProjectCreateDTO,
-        ProjectUpdateDTO>{
+        ProjectUpdateDTO> {
 
     @Override
     public ProjectDTO toDTO(Project domain) {

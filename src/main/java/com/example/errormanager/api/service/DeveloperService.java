@@ -6,8 +6,9 @@ import com.example.errormanager.api.dto.developer.DeveloperCreateDTO;
 import com.example.errormanager.api.dto.developer.DeveloperDTO;
 import com.example.errormanager.api.dto.developer.DeveloperUpdateDTO;
 import com.example.errormanager.api.dto.project.SendErrorDTO;
-import com.example.errormanager.api.exception.BasicCredentials;
+import com.example.errormanager.api.exception.BadCredentials;
 import com.example.errormanager.api.exception.DeveloperNotFoundException;
+import com.example.errormanager.api.exception.ForbiddenException;
 import com.example.errormanager.api.mapper.DeveloperMapper;
 import com.example.errormanager.api.repository.DeveloperRepository;
 import com.example.errormanager.api.validation.DeveloperValidation;
@@ -21,10 +22,12 @@ import java.util.Optional;
  */
 
 @Service
-public class DeveloperService extends AbstractService<
+public class DeveloperService
+        extends AbstractService<
         DeveloperRepository,
         DeveloperMapper,
-        DeveloperValidation> implements BaseCrudService<
+        DeveloperValidation>
+        implements BaseCrudService<
         Developer,
         DeveloperDTO,
         DeveloperCreateDTO,
@@ -33,7 +36,7 @@ public class DeveloperService extends AbstractService<
         DeveloperCriteria> {
 
 
-    public DeveloperService(DeveloperRepository repository, DeveloperMapper mapper, DeveloperRepository validation) {
+    public DeveloperService(DeveloperRepository repository, DeveloperMapper mapper, DeveloperValidation validation) {
         super(repository, mapper, validation);
     }
 
@@ -44,7 +47,7 @@ public class DeveloperService extends AbstractService<
             return mapper.toDTO(developerOptional.get());
         }
 
-        throw new BasicCredentials();
+        throw new BadCredentials();
     }
 
     @Override
@@ -61,6 +64,7 @@ public class DeveloperService extends AbstractService<
 
     @Override
     public Boolean update(DeveloperUpdateDTO dto) {
+        validation.checkUpdate(dto);
         Optional<Developer> developerOptional = repository.findByIdAndDeletedFalse(dto.getId());
         if (developerOptional.isPresent()) {
             repository.save(mapper.fromUpdateDTO(developerOptional.get(), dto));
@@ -86,16 +90,15 @@ public class DeveloperService extends AbstractService<
 
     public DeveloperDTO getByChatId(String chatId) {
         Optional<Developer> developerOptional = repository.findByChatIdAndDeletedFalse(chatId);
-        if (developerOptional.isPresent())
-            return mapper.toDTO(developerOptional.get());
-        throw new DeveloperNotFoundException();
+        if (developerOptional.isPresent()) return mapper.toDTO(developerOptional.get());
+        throw new ForbiddenException();
 
     }
 
-    public List<SendErrorDTO> getDeveloperChatId(Long projectId) {
+    public List<String> getDeveloperChatId(Long projectId) {
 
-//        return repository.findAllChatId(projectId);
-        return null;
+        return repository.findAllChatId(projectId);
+
 
     }
 }

@@ -24,6 +24,8 @@ public class ErrorMessage implements BaseDomain{
 
     private Long projectId;
 
+    private String projectName;
+
     private LocalDateTime happenTime;
 
 }

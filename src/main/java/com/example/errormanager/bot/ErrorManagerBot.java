@@ -5,8 +5,10 @@ import com.example.errormanager.bot.handler.UpdateHandler;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -16,9 +18,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
 public class ErrorManagerBot extends TelegramLongPollingBot {
-
-    private final BotConfig config;
-
+    private final BotConfig config ;
     private final UpdateHandler updateHandler;
 
     public ErrorManagerBot(BotConfig config, @Lazy UpdateHandler updateHandler) {
@@ -41,6 +41,18 @@ public class ErrorManagerBot extends TelegramLongPollingBot {
         updateHandler.handle(update);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
     public void sendMessage(SendMessage sendMessage) {
         sendMessage.setParseMode("HTML");
         try {
@@ -51,9 +63,17 @@ public class ErrorManagerBot extends TelegramLongPollingBot {
     }
 
     public void sendDocument(SendDocument sendDocument) {
-        sendDocument.setParseMode("HTML");
         try {
+            sendDocument.setParseMode(ParseMode.HTML);
             execute(sendDocument);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendDeleteMessage(DeleteMessage deleteMessage) {
+        try {
+            execute(deleteMessage);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
