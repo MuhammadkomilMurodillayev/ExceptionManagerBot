@@ -1,5 +1,7 @@
 package com.example.errormanager.bot.button;
 
+import com.example.errormanager.api.domain.Developer;
+import com.example.errormanager.api.dto.developer.DeveloperDTO;
 import com.example.errormanager.api.enums.DeveloperRole;
 import com.example.errormanager.bot.enums.HomeMenuState;
 import org.springframework.stereotype.Component;
@@ -20,10 +22,11 @@ import static com.example.errormanager.bot.states.State.getHomeMenuState;
  */
 @Component
 public class MarkupBoard {
-    private static final ReplyKeyboardMarkup board = new ReplyKeyboardMarkup();
-    private static final InlineKeyboardMarkup keyBoard = new InlineKeyboardMarkup();
+    public static final ReplyKeyboardMarkup board = new ReplyKeyboardMarkup();
+    public static final InlineKeyboardMarkup keyBoard = new InlineKeyboardMarkup();
 
-    public void menu(SendMessage sendMessage, DeveloperRole role) {
+    public void menu(SendMessage sendMessage, DeveloperDTO developer) {
+        DeveloperRole role = developer.getRole();
 
         String chatId = sendMessage.getChatId();
         if (getHomeMenuState(chatId).equals(HomeMenuState.MAIN_MENU)) {
@@ -39,29 +42,16 @@ public class MarkupBoard {
             board.setResizeKeyboard(true);
             board.setSelective(true);
             sendMessage.setReplyMarkup(board);
-        } else if (getHomeMenuState(chatId).equals(HomeMenuState.PROJECT_SERVICE) && role.equals(DeveloperRole.PROGRAMMER)) {
+        } else if (getHomeMenuState(chatId).equals(HomeMenuState.PROJECT_SERVICE)) {
 
             List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
             buttons.add(List.of(InlineKeyboardButton.builder().text("set project").callbackData("set_project").build()));
             buttons.add(List.of(InlineKeyboardButton.builder().text("my project").callbackData("my_project").build()));
+            if (role.equals(DeveloperRole.TEAM_LEAD))
+                buttons.add(List.of(InlineKeyboardButton.builder().text("add project").callbackData("add_project").build()));
 
             keyBoard.setKeyboard(buttons);
             sendMessage.setText("=== Project service ===");
-            sendMessage.setReplyMarkup(keyBoard);
-
-        } else if (getHomeMenuState(chatId).equals(HomeMenuState.PROJECT_SERVICE) && role.equals(DeveloperRole.TEAM_LEAD)) {
-
-            List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-            buttons.add(List.of(InlineKeyboardButton.builder().text("set project").callbackData("set_project").build()));
-            buttons.add(List.of(
-                    InlineKeyboardButton.builder().text("add project").callbackData("add_project").build(),
-                    InlineKeyboardButton.builder().text("my project").callbackData("my_project").build(),
-                    InlineKeyboardButton.builder().text("all project").callbackData("all_project").build(),
-                    InlineKeyboardButton.builder().text("project details").callbackData("project_details").build()
-            ));
-
-            keyBoard.setKeyboard(buttons);
-            sendMessage.setText("=== Project sevice ===");
             sendMessage.setReplyMarkup(keyBoard);
 
         } else if (getHomeMenuState(chatId).equals(HomeMenuState.USER_SERVICE) && role.equals(DeveloperRole.TEAM_LEAD)) {
@@ -79,8 +69,19 @@ public class MarkupBoard {
             sendMessage.setReplyMarkup(keyBoard);
 
         } else if (getHomeMenuState(chatId).equals(HomeMenuState.SETTINGS)) {
-            sendMessage.setText("Tayyor emas");
-            //TODO version 2
+            List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+            buttons.add(List.of(InlineKeyboardButton.builder().text("change password").callbackData("change_password").build()));
+            buttons.add(List.of(
+                    InlineKeyboardButton.builder().text("change language").callbackData("change_password").build()
+            ));
+
+            keyBoard.setKeyboard(buttons);
+            sendMessage.setText("<b>Settings\n" +
+                    "\nName:</b> " + developer.getFullName() +
+                    "\n<b>Username:</b> " + developer.getUsername()+
+                    "\n<b>Role:</b> " + role +
+                    "\n<b>Language:</b> " + developer.getLanguage());
+            sendMessage.setReplyMarkup(keyBoard);
         }
 
     }

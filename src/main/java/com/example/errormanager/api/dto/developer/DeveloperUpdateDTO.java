@@ -3,6 +3,7 @@ package com.example.errormanager.api.dto.developer;
 import com.example.errormanager.api.domain.Project;
 import com.example.errormanager.api.dto.BaseGenericDTO;
 import com.example.errormanager.api.enums.DeveloperRole;
+import com.example.errormanager.api.enums.Language;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +26,9 @@ public class DeveloperUpdateDTO extends BaseGenericDTO {
 
     private DeveloperRole role;
 
-    private Set<Project> projects;
+    //    private Set<Project> projects;
+
+    private Language language;
 
     private String chatId;
 }

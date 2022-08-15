@@ -6,6 +6,7 @@ import com.example.errormanager.api.dto.project.ProjectDTO;
 import com.example.errormanager.api.dto.project.ProjectUpdateDTO;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,12 +22,23 @@ public class ProjectMapper implements BaseGenericMapper<
 
     @Override
     public ProjectDTO toDTO(Project domain) {
-        return null;
+
+        ProjectDTO project = new ProjectDTO();
+        project.setId(domain.getId());
+        project.setName(domain.getName());
+        return project;
+
     }
 
     @Override
     public List<ProjectDTO> toDTO(List<Project> domains) {
-        return null;
+        List<ProjectDTO> projects = new ArrayList<>();
+
+        domains.forEach((domain)->{
+            projects.add(toDTO(domain));
+        });
+
+        return projects;
     }
 
     @Override

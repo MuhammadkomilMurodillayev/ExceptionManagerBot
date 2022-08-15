@@ -1,16 +1,17 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/exception_management?current_schema=main
+    url: jdbc:postgresql://localhost:54321/postgres?current_schema=main
     username: postgres
     password: 19801980
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
+    open-in-view: false
 bot:
-  username: Exception_managerbot
-  token: 5415772343:AAEI8404yPyfP1z-fCh1iazh10SY0lngdgo
+  username: Error_manager_bot
+  token: 5471963570:AAHyMHFh7sERsquGWv5UtyEDQ2-OqYF6o8E
 server:
   port: 6060
 springdoc:
@@ -18,4 +19,5 @@ springdoc:
     path: /sw
   api-docs:
     path: /api-docs
-
+file:
+  root: C:\Users\Muhammaddiyor\IdeaProjects\ExceptionManagerBot\src\main\resources\sendFile

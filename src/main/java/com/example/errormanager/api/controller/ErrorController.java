@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/error")
 public class ErrorController {
-
     private final ErrorService service;
-
     @Autowired
     public ErrorController(ErrorService service) {
         this.service = service;
@@ -28,5 +26,6 @@ public class ErrorController {
     public void send(@RequestBody ErrorMessage error) {
         service.send(error);
     }
+
 
 }

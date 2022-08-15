@@ -24,20 +24,20 @@ public class DeveloperMapper
                 DeveloperCreateDTO,
                 DeveloperUpdateDTO> {
 
-    private final ProjectRepository projectRepository;
+//    private final ProjectRepository projectRepository;
 
     private static final PasswordEncoder ENCODER = new BCryptPasswordEncoder(8);
 
-    public DeveloperMapper(ProjectRepository projectRepository) {
-        this.projectRepository = projectRepository;
-    }
+//    public DeveloperMapper(ProjectRepository projectRepository) {
+//        this.projectRepository = projectRepository;
+//    }
 
     @Override
     public DeveloperDTO toDTO(Developer domain) {
 
         DeveloperDTO developer = new DeveloperDTO();
-        List<Project> projectList = projectRepository.findAllByDeleted(false);
-        Set<Project> projects = new HashSet<>(projectList);
+//        List<Project> projectList = projectRepository.findAllByDeleted(false);
+//        Set<Project> projects = new HashSet<>(projectList);
 
         developer.setChatId(domain.getChatId());
         developer.setRole(domain.getRole());
@@ -45,7 +45,9 @@ public class DeveloperMapper
         developer.setId(domain.getId());
         developer.setPassword(domain.getPassword());
         developer.setUsername(domain.getUsername());
-        developer.setProjects(projects);
+        developer.setLanguage(domain.getLanguage());
+        developer.setStatus(domain.getStatus());
+//        developer.setProjects(projects);
 
         return developer;
     }
@@ -70,8 +72,9 @@ public class DeveloperMapper
         developer.setPassword(ENCODER.encode(dto.getPassword()));
         developer.setUpdatedAt(developer.getCreatedAt());
         developer.setRole(dto.getRole());
+        developer.setLanguage(dto.getLanguage());
 
-        if (Objects.nonNull(dto.getProjects())) developer.setProjects(dto.getProjects());
+//        if (Objects.nonNull(dto.getProjects())) developer.setProjects(dto.getProjects());
 
         return developer;
     }
@@ -83,8 +86,9 @@ public class DeveloperMapper
         if (dto.getFullName() != null) developer.setFullName(dto.getFullName());
         if (dto.getUsername() != null) developer.setUsername(dto.getUsername());
         if (dto.getPassword() != null) developer.setPassword(ENCODER.encode(dto.getPassword()));
-        if (dto.getPassword() != null) developer.setRole(dto.getRole());
-        if (dto.getProjects() != null) developer.setProjects(dto.getProjects());
+        if (dto.getPassword() != null) developer.setPassword(ENCODER.encode(dto.getPassword()));
+        if (dto.getLanguage() != null) developer.setLanguage(dto.getLanguage());
+//        if (dto.getProjects() != null) developer.setProjects(dto.getProjects());
         if (dto.getChatId() != null) developer.setChatId(dto.getChatId());
 
         return developer;

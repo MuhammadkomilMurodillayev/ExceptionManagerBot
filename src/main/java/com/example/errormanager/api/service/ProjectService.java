@@ -55,6 +55,12 @@ public class ProjectService extends AbstractService<
 
     @Override
     public List<ProjectDTO> getAll(ProjectCriteria criteria) {
-        return null;
+        List<Project> projectList = repository.findAllByDeleted(false);
+        return mapper.toDTO(projectList);
+    }
+
+    public List<ProjectDTO> getAll(Long developerId) {
+        List<Project> projectList = repository.findAllByDeveloperId(developerId);
+        return mapper.toDTO(projectList);
     }
 }

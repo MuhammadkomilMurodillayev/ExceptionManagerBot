@@ -17,7 +17,7 @@ public interface BaseCrudService<
         CD extends BaseDTO,
         UD extends BaseGenericDTO,
         K extends Serializable,
-        C extends BaseCriteria> {
+        C extends BaseCriteria> extends BaseService{
 
     E create(CD dto);
 

@@ -1,11 +1,10 @@
 package com.example.errormanager.api.service;
 
 import com.example.errormanager.api.domain.ErrorMessage;
+import com.example.errormanager.api.util.RootUtil;
 import com.example.errormanager.bot.ErrorManagerBot;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 
 import java.io.File;
@@ -24,10 +23,14 @@ public class ErrorService {
 
     private final ErrorManagerBot bot;
 
+    private final RootUtil rootUtil;
+
+
     private final DeveloperService developerService;
 
-    public ErrorService(ErrorManagerBot bot, DeveloperService developerService) {
+    public ErrorService(ErrorManagerBot bot, RootUtil rootUtil, DeveloperService developerService) {
         this.bot = bot;
+        this.rootUtil = rootUtil;
         this.developerService = developerService;
     }
 
@@ -37,17 +40,23 @@ public class ErrorService {
             sendError(error);
         } else {
 
-            List<String> sendErrorDTOS = developerService.getDeveloperChatId(error.getProjectId());
+            List<String> chatIdList = developerService.getDeveloperChatId(error.getProjectId());
             SendDocument sendDocument = new SendDocument();
 
+            InputFile inputFile = new InputFile(error.getStream(), "error.log");
 
-            InputFile inputFile = new InputFile(error.getStream(), "error");
-
-            sendErrorDTOS.forEach((s) -> {
+            for (String chatId : chatIdList) {
                 sendDocument.setCaption("<b>Project: </b>" + error.getProjectName() + "\n<b>Time: </b>" + error.getHappenTime());
                 sendDocument.setDocument(inputFile);
+                sendDocument.setChatId(chatId);
                 bot.sendDocument(sendDocument);
-            });
+            }
+
+//            sendErrorDTOS.forEach((s) -> {
+//                sendDocument.setCaption("<b>Project: </b>" + error.getProjectName() + "\n<b>Time: </b>" + error.getHappenTime());
+//                sendDocument.setDocument(inputFile);
+//                bot.sendDocument(sendDocument);
+//            });
         }
     }
 
@@ -60,8 +69,7 @@ public class ErrorService {
         String prefix = "error";
         String suffix = ".log";
 
-        File directoryPath = new File("/Users/macbookair/Documents/PDP/Java backend/ErrorManager/src/main/resources/sendFile");
-
+        File directoryPath = new File(rootUtil.getRoot());
 
         try {
             file = File.createTempFile(prefix, suffix, directoryPath);
@@ -75,8 +83,6 @@ public class ErrorService {
         SendDocument sendDocument = new SendDocument();
 
         InputFile inputFile = new InputFile(file);
-
-        System.out.println(inputFile);
 
         for (String s : chatIdList) {
             sendDocument.setCaption("<b>Project: </b>" + error.getProjectName() + "\n<b>Time: </b>" + error.getHappenTime());

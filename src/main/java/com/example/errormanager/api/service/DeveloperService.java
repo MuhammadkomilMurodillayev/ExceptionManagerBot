@@ -2,17 +2,20 @@ package com.example.errormanager.api.service;
 
 import com.example.errormanager.api.criteria.DeveloperCriteria;
 import com.example.errormanager.api.domain.Developer;
+import com.example.errormanager.api.domain.Project;
+import com.example.errormanager.api.domain.ProjectDeveloper;
 import com.example.errormanager.api.dto.developer.DeveloperCreateDTO;
 import com.example.errormanager.api.dto.developer.DeveloperDTO;
 import com.example.errormanager.api.dto.developer.DeveloperUpdateDTO;
-import com.example.errormanager.api.dto.project.SendErrorDTO;
 import com.example.errormanager.api.exception.BadCredentials;
-import com.example.errormanager.api.exception.DeveloperNotFoundException;
 import com.example.errormanager.api.exception.ForbiddenException;
 import com.example.errormanager.api.mapper.DeveloperMapper;
 import com.example.errormanager.api.repository.DeveloperRepository;
+import com.example.errormanager.api.repository.ProjectDeveloperRepository;
+import com.example.errormanager.api.repository.ProjectRepository;
 import com.example.errormanager.api.validation.DeveloperValidation;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,14 +38,19 @@ public class DeveloperService
         Long,
         DeveloperCriteria> {
 
+    private final ProjectDeveloperRepository projectDeveloperRepository;
 
-    public DeveloperService(DeveloperRepository repository, DeveloperMapper mapper, DeveloperValidation validation) {
+    private final ProjectRepository projectRepository;
+
+    public DeveloperService(DeveloperRepository repository, DeveloperMapper mapper, DeveloperValidation validation, ProjectDeveloperRepository projectDeveloperRepository, ProjectRepository projectRepository) {
         super(repository, mapper, validation);
+        this.projectDeveloperRepository = projectDeveloperRepository;
+        this.projectRepository = projectRepository;
     }
 
     public DeveloperDTO getByUsername(String username) {
 
-        Optional<Developer> developerOptional = repository.findByUsernameAndDeletedFalse(username);
+        Optional<Developer> developerOptional = repository.findByUsernameAndDeletedFalse(username.toLowerCase());
         if (developerOptional.isPresent()) {
             return mapper.toDTO(developerOptional.get());
         }
@@ -61,6 +69,11 @@ public class DeveloperService
     public Boolean delete(Long id) {
         return null;
     }
+
+    public void deleteByUsername(String username) {
+        repository.deleteByUsername(username.toLowerCase());
+    }
+
 
     @Override
     public Boolean update(DeveloperUpdateDTO dto) {
@@ -89,9 +102,13 @@ public class DeveloperService
     }
 
     public DeveloperDTO getByChatId(String chatId) {
-        Optional<Developer> developerOptional = repository.findByChatIdAndDeletedFalse(chatId);
-        if (developerOptional.isPresent()) return mapper.toDTO(developerOptional.get());
-        throw new ForbiddenException();
+
+        Developer developerOptional = repository.findByChatIdAndDeletedFalse(chatId).orElseThrow(() -> {
+            throw new ForbiddenException();
+        });
+
+        return mapper.toDTO(developerOptional);
+
 
     }
 
@@ -99,6 +116,31 @@ public class DeveloperService
 
         return repository.findAllChatId(projectId);
 
+
+    }
+
+    @Transactional
+    public void setProjects(String[] projectNames, String chatId) {
+
+        DeveloperDTO developer = getByChatId(chatId);
+
+        projectDeveloperRepository.deleteAllByDeveloperId(developer.getId());
+
+        for (String projectName : projectNames) {
+
+            Optional<Project> projectOptional = projectRepository.findByNameIsLikeIgnoreCase(projectName);
+            projectOptional.ifPresent(project -> projectDeveloperRepository.save(new ProjectDeveloper(project.getId(), developer.getId())));
+
+        }
+    }
+
+    public void activated(String username) {
+        Optional<Developer> developerOptional = repository.findByUsernameAndDeletedFalse(username);
+        if (developerOptional.isPresent()) {
+            Developer developer = developerOptional.get();
+            developer.setStatus((short) 0);
+            repository.save(developer);
+        }
 
     }
 }

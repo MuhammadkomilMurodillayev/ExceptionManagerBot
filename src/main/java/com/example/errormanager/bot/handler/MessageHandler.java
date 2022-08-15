@@ -1,21 +1,28 @@
 package com.example.errormanager.bot.handler;
 
+import com.example.errormanager.api.domain.ErrorMessage;
 import com.example.errormanager.api.dto.developer.DeveloperDTO;
 import com.example.errormanager.api.dto.developer.DeveloperUpdateDTO;
 import com.example.errormanager.api.enums.DeveloperRole;
 import com.example.errormanager.api.service.DeveloperService;
+import com.example.errormanager.api.service.ErrorService;
+import com.example.errormanager.api.util.RootUtil;
 import com.example.errormanager.bot.ErrorManagerBot;
 import com.example.errormanager.bot.button.MarkupBoard;
 import com.example.errormanager.bot.enums.DeveloperState;
 import com.example.errormanager.bot.enums.HomeMenuState;
+import com.example.errormanager.bot.process.DeveloperProcess;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.time.LocalDateTime;
 
 import static com.example.errormanager.bot.states.State.*;
 
@@ -25,23 +32,51 @@ import static com.example.errormanager.bot.states.State.*;
 
 @Component
 public class MessageHandler implements BaseHandler {
-
+    private final DeveloperProcess developerProcess;
     private final ErrorManagerBot bot;
     private final DeveloperService developerService;
     private final MarkupBoard markupBoard;
+    private final RootUtil rootUtil;
+    private final ErrorService errorService;
 
+    public MessageHandler(DeveloperProcess developerProcess, ErrorManagerBot bot, DeveloperService developerService, MarkupBoard markupBoard, RootUtil rootUtil, ErrorService errorService) {
+        this.developerProcess = developerProcess;
 
-    public MessageHandler(ErrorManagerBot bot, DeveloperService developerService, MarkupBoard markupBoard) {
         this.bot = bot;
         this.developerService = developerService;
         this.markupBoard = markupBoard;
+        this.rootUtil = rootUtil;
+        this.errorService = errorService;
     }
 
     @Override
     public void handle(Update update) {
 
+        try {
+            if (update.getMessage().getText().equals("send"))
+                throw new RuntimeException();
+
+        } catch (RuntimeException e) {
+
+            ErrorMessage errorMessage = new ErrorMessage();
+            FileInputStream inputStream = null;
+            try {
+                inputStream = new FileInputStream(rootUtil.getRoot());
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
+            errorMessage.setStream(inputStream);
+            errorMessage.setProjectId(1L);
+            errorMessage.setProjectName("Uzagroin");
+            errorMessage.setHappenTime(LocalDateTime.now());
+
+            errorService.send(errorMessage);
+
+        }
+
         Message message = update.getMessage();
         String chatId = message.getChatId().toString();
+        String text = message.getText().toLowerCase();
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
 
@@ -49,27 +84,23 @@ public class MessageHandler implements BaseHandler {
             sendMessage.setText("<b>input username and password.\n\nexp:</b> <i>username/password</i>");
             bot.sendMessage(sendMessage);
 
-        } else if (getDeveloperState(chatId).equals(DeveloperState.UNAUTHENTICATED) && message.getText().contains("/")) {
+        } else if (getDeveloperState(chatId).equals(DeveloperState.UNAUTHENTICATED) && text.contains("/")) {
 
-            String[] usernameAndPassword = message.getText().split("/");
-            String username = usernameAndPassword[0];
-            String password = usernameAndPassword[1];
+            bot.sendMessage(developerProcess.login(sendMessage,message));
 
-            DeveloperDTO developer = developerService.getByUsername(username);
-            PasswordEncoder encoder = new BCryptPasswordEncoder(8);
+        } else if (getDeveloperState(chatId).equals(DeveloperState.AUTHENTICATED) && text.startsWith("set:")) {
 
-            if (encoder.matches(password, developer.getPassword())) {
+            bot.sendMessage(developerProcess.setProject(sendMessage,message));
 
-                setDeveloperState(chatId, DeveloperState.AUTHENTICATED);
-                sendMessage.setText("Successfully authenticated");
-                DeveloperUpdateDTO developerUpdateDTO = new DeveloperUpdateDTO();
-                developerUpdateDTO.setChatId(chatId);
-                developerUpdateDTO.setId(developer.getId());
-                developerService.update(developerUpdateDTO);
-                markupBoard.menu(sendMessage, developer.getRole());
-                bot.sendMessage(sendMessage);
-            }
-        } else {
+        } else if (getDeveloperState(chatId).equals(DeveloperState.AUTHENTICATED) && text.startsWith("add_u:")) {
+
+            bot.sendMessage(developerProcess.addUser(sendMessage, text));
+
+        } else if (getDeveloperState(chatId).equals(DeveloperState.AUTHENTICATED) && text.startsWith("logout")) {
+
+            bot.sendMessage(developerProcess.logout(sendMessage,message));
+
+        } else if (getDeveloperState(chatId).equals(DeveloperState.AUTHENTICATED)) {
 
             DeveloperDTO developer = developerService.getByChatId(chatId);
 
@@ -80,16 +111,18 @@ public class MessageHandler implements BaseHandler {
             else if (message.getText().equalsIgnoreCase("user service") && developer.getRole().equals(DeveloperRole.TEAM_LEAD)) {
                 setHomeMenuState(chatId, HomeMenuState.USER_SERVICE);
 
-            } else setHomeMenuState(chatId, HomeMenuState.MAIN_MENU);
-
-            markupBoard.menu(sendMessage, developer.getRole());
-
-            try {
-                bot.execute(sendMessage);
-            } catch (TelegramApiException e) {
-                throw new RuntimeException(e);
+            } else {
+                setHomeMenuState(chatId, HomeMenuState.MAIN_MENU);
+                DeleteMessage deleteMessage = new DeleteMessage(chatId,message.getMessageId());
+                bot.sendDeleteMessage(deleteMessage);
+                return;
             }
-//            bot.sendMessage(sendMessage);
+
+            markupBoard.menu(sendMessage, developer);
+            bot.sendMessage(sendMessage);
+        } else {
+            sendMessage.setText("Forbidden!");
+            bot.sendMessage(sendMessage);
         }
     }
 }

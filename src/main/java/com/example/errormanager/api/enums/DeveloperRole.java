@@ -6,7 +6,6 @@ package com.example.errormanager.api.enums;
 public enum DeveloperRole {
 
     TEAM_LEAD,
-
     PROGRAMMER
 
 }

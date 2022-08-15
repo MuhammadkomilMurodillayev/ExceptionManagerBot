@@ -2,6 +2,7 @@ package com.example.errormanager.bot.states;
 
 import com.example.errormanager.bot.enums.DeveloperState;
 import com.example.errormanager.bot.enums.HomeMenuState;
+import com.example.errormanager.bot.enums.UserServiceState;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +15,9 @@ public class State {
     private static final Map<String, DeveloperState> developerStateMap = new HashMap<>();
 
     private static final Map<String, HomeMenuState> homeMenuStateMap = new HashMap<>();
+
+
+    private static final Map<String, UserServiceState> userServiceStateMap = new HashMap<>();
 
     public static void setDeveloperState(String chatId, DeveloperState state) {
         developerStateMap.put(chatId, state);
@@ -37,6 +41,19 @@ public class State {
         }
         System.out.println(homeMenuStateMap.get(chatId));
         return homeMenuStateMap.get(chatId);
+    }
+
+
+    public static void setUserServiceState(String chatId, UserServiceState state) {
+        userServiceStateMap.put(chatId, state);
+    }
+
+    public static UserServiceState getUserServiceState(String chatId) {
+
+        if (Objects.isNull(userServiceStateMap.get(chatId))) {
+            State.setUserServiceState(chatId, UserServiceState.FULL_NAME);
+        }
+        return userServiceStateMap.get(chatId);
     }
 
 

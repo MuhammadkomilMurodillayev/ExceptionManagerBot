@@ -7,12 +7,13 @@ import com.example.errormanager.bot.ErrorManagerBot;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 /**
  * @author Muhammadkomil Murodillayev, чт 20:37. 8/11/22
  */
 
-@ControllerAdvice
+@ControllerAdvice(basePackages = "com.example.errormanager.api")
 public class GlobalExceptionHandler {
 
     private final ErrorManagerBot bot;
@@ -38,8 +39,15 @@ public class GlobalExceptionHandler {
         sendErrorMessage(exception.getMessage());
     }
 
+    @ExceptionHandler(value = {TelegramApiRequestException.class})
+    public void badCredentialsHandler(TelegramApiRequestException exception) {
+        System.out.println(exception.getMessage());
+    }
+
     private void sendErrorMessage(String message) {
         SEND_MESSAGE.setText(message);
         bot.sendMessage(SEND_MESSAGE);
     }
+
+
 }

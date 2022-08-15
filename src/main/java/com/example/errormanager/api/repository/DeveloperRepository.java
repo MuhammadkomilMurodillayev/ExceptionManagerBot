@@ -5,6 +5,7 @@ import com.example.errormanager.api.dto.developer.DeveloperUpdateDTO;
 import com.example.errormanager.api.dto.project.SendErrorDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,13 +25,15 @@ public interface DeveloperRepository extends JpaRepository<Developer, Long>, Bas
 
 
     @Query(value = "select d.chat_id " +
-            "from developer_project dp " +
+            "from project_developer dp " +
             "right join developer d on dp.developer_id = d.id " +
-            "where dp.project_id = ?1 ",
+            "where dp.project_id = :projectId ",
             nativeQuery = true)
     List<String> findAllChatId(Long projectId);
 
-//    @Query(value = "select p.name, t.chat_id as chatId" +
+    void deleteByUsername(String username);
+
+    //    @Query(value = "select p.name, t.chat_id as chatId" +
 //            "from (select d.chat_id, dp.project_id " +
 //            "      from developer_project dp " +
 //            "               right join developer d on dp.developer_id = d.id " +

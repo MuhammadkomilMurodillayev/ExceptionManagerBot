@@ -6,11 +6,13 @@ import com.example.errormanager.api.dto.project.ProjectCreateDTO;
 import com.example.errormanager.api.enums.DeveloperRole;
 import com.example.errormanager.api.service.DeveloperService;
 import com.example.errormanager.api.service.ProjectService;
+import com.example.errormanager.bot.config.BotInitializer;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.telegram.telegrambots.meta.ApiConstants;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,9 +30,13 @@ public class ErrorManagerApplication /*implements CommandLineRunner*/ {
     }
 
     public static void main(String[] args) {
+
         PasswordEncoder encoder = new BCryptPasswordEncoder(8);
+
         System.out.printf(encoder.encode("muhammad123"));
+
         SpringApplication.run(ErrorManagerApplication.class, args);
+
     }
 
     public void run(String... args) throws Exception {
@@ -47,7 +53,6 @@ public class ErrorManagerApplication /*implements CommandLineRunner*/ {
         dto.setUsername("muhammad");
         dto.setPassword("muhammad123");
         dto.setRole(DeveloperRole.TEAM_LEAD);
-        dto.setProjects(projectSet);
 
         developerService.create(dto);
     }

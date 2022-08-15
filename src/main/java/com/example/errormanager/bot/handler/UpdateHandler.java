@@ -3,6 +3,7 @@ package com.example.errormanager.bot.handler;
 import com.example.errormanager.bot.ErrorManagerBot;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -11,7 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  * @author Muhammadkomil Murodillayev, ср 10:39. 8/10/22
  */
 
-@Component
+@Service
 public class UpdateHandler implements BaseHandler {
 
     private final MessageHandler messageHandler;

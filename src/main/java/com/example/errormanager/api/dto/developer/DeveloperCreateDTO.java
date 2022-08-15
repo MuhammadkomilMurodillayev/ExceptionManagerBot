@@ -3,6 +3,7 @@ package com.example.errormanager.api.dto.developer;
 import com.example.errormanager.api.domain.Project;
 import com.example.errormanager.api.dto.BaseDTO;
 import com.example.errormanager.api.enums.DeveloperRole;
+import com.example.errormanager.api.enums.Language;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,8 +25,12 @@ public class DeveloperCreateDTO implements BaseDTO {
 
     private DeveloperRole role;
 
-    private Set<Project> projects;
+//    private Set<Project> projects;
+
+    private Language language;
+
     public DeveloperCreateDTO() {
         this.role = DeveloperRole.PROGRAMMER;
+        this.language = Language.EN;
     }
 }
