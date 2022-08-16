@@ -27,5 +27,4 @@ public class ErrorController {
         service.send(error);
     }
 
-
 }
