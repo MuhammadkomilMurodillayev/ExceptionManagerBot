@@ -2,16 +2,16 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:54321/postgres?current_schema=main
-    username: postgres
-    password: 19801980
+    username: *****
+    password: *******
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
     open-in-view: false
 bot:
-  username: Error_manager_bot
-  token: 5471963570:AAHyMHFh7sERsquGWv5UtyEDQ2-OqYF6o8E
+  username: *********
+  token: ************
 server:
   port: 6060
 springdoc:
